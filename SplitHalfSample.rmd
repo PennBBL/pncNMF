@@ -1,0 +1,95 @@
+---
+title: "R Notebook"
+output:
+  word_document: default
+  html_notebook: default
+  pdf_document: default
+  html_document: default
+---
+
+
+```{r split pre-QAed sample into halves based on overall psych}
+#Load library.
+require('caret')
+
+#Set project path so you don't have to type full path every time (this is the scripts folder).
+setwd('./')
+
+#Load data.
+subjData <- readRDS("../subjectData/n1396_T1_subjData.rds")
+
+#Pull out only variables of interest for splitting and checking demographics.
+dataToSplit <- subjData[,c('bblid','scanid','sex','race2','ageAtScan1','mood_4factor','psychosis_4factor','externalizing_4factor','phobias_4factor','overall_psychopathology_4factor')]
+
+#Remove any NA's from the variable you want to split on.
+dataNoNA <- subset(dataToSplit,is.na(dataToSplit$overall_psychopathology_4factor)==FALSE)
+
+#Count number of subjects before and after removing NAs.
+nrow(dataToSplit)
+nrow(dataNoNA)
+
+#Set a random number as the seed.
+set.seed(1234)
+
+##Split into the train and test data sets using caret.
+#p=the percentage of data that goes to training (e.g., 50%)
+#list=FALSE (gives a matrix with rows instead of list) 
+#times=the number of partitions to create (number of training sets)
+trainIndex <- createDataPartition(dataNoNA$overall_psychopathology_4factor, p=0.5, list=F, times=1)
+
+#Pull the variables into the new train and test matrices.
+dataTrain <- dataNoNA[trainIndex,]
+dataTest <- dataNoNA[-trainIndex,]
+
+#Count number of subjects in the train and test sets.
+nrow(dataTrain)
+nrow(dataTest)
+
+#Save the train and test samples with the demographic variables.
+write.csv(dataTrain,'../subjectData/n699_T1_train.csv',row.names=FALSE, quote=FALSE)
+write.csv(dataTest,'../subjectData/n696_T1_test.csv',row.names=FALSE, quote=FALSE)
+
+#Save the bblids and scanids only for NMF.
+IDs <- c("bblid", "scanid")
+bblidsScanids_train <- dataTrain[IDs]
+bblidsScanids_test <- dataTest[IDs]
+
+#Remove header.
+names(bblidsScanids_train) <- NULL
+names(bblidsScanids_test) <- NULL
+
+#Save lists.
+write.csv(bblidsScanids_train, file="../subjectData/n1396_T1_train_bblids_scanids.csv", row.names=FALSE)
+write.csv(bblidsScanids_test, file="../subjectData/n1396_T1_test_bblids_scanids.csv", row.names=FALSE)
+
+##Make histograms to see that train and test are relatively similar.
+#Overall Psych
+hist(dataTrain$overall_psychopathology_4factor,breaks=14)
+hist(dataTest$overall_psychopathology_4factor,breaks=14)
+
+#Sex
+hist(dataTest$sex,breaks=2)
+hist(dataTrain$sex,breaks=2)
+
+#Age
+hist(dataTrain$ageAtScan1,breaks=14)
+hist(dataTest$ageAtScan1,breaks=14)
+
+#Mood
+hist(dataTest$mood_4factor,breaks=14)
+hist(dataTrain$mood_4factor,breaks=14)
+
+#Psychosis
+hist(dataTest$psychosis_4factor,breaks=14)
+hist(dataTrain$psychosis_4factor,breaks=14)
+
+#Externalizing
+hist(dataTest$externalizing_4factor,breaks=14)
+hist(dataTrain$externalizing_4factor,breaks=14)
+
+#Phobias
+hist(dataTest$phobias_4factor,breaks=14)
+hist(dataTrain$phobias_4factor,breaks=14)
+
+
+```
