@@ -1,8 +1,0 @@
-name: Publish Document
-title:
-account: rpubs
-server: rpubs.com
-appId: https://api.rpubs.com/api/v1/document/286741/833a593a093b4115b78f7f3636efa7a8
-bundleId: https://api.rpubs.com/api/v1/document/286741/833a593a093b4115b78f7f3636efa7a8
-url: http://rpubs.com/antoniak/286741
-when: 1498142477.84362
