@@ -1,1 +1,0 @@
-[meanInner,medianInner,ARI,sortedBasisNum] = evaluateReproducibility(/cbica/projects/pncNmf/n1396_t1NMF/results/CT_test,/cbica/projects/pncNmf/n1396_t1NMF/results/CT_train)
